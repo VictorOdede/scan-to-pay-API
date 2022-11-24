@@ -1,0 +1,63 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DEV_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+enum Role {
+    USER
+    ADMIN
+}
+
+model Business {
+    id           String        @id @default(uuid())
+    createdAt    DateTime      @default(now()) @db.Timestamptz(2)
+    updatedAt    DateTime      @updatedAt @db.Timestamptz(2)
+    businessName String
+    email        String        @unique
+    phone        String
+    tillNumber   String?
+    storeNumber  String?
+    password     String
+    role         Role          @default(USER)
+    branches     Branch[]
+    transactions Transaction[]
+}
+
+model Payer {
+    id           Int           @id @default(autoincrement())
+    createdAt    DateTime      @default(now()) @db.Timestamptz(2)
+    firstName    String?       @default("")
+    lastName     String?       @default("")
+    phone        String        @unique
+    role         Role          @default(USER)
+    transactions Transaction[]
+}
+
+model Branch {
+    id            String        @id @default(uuid())
+    createdAt     DateTime      @default(now()) @db.Timestamptz(2)
+    updatedAt     DateTime      @updatedAt @db.Timestamptz(2)
+    branchName    String
+    business      Business      @relation(fields: [businessEmail], references: [email])
+    businessEmail String
+    transactions  Transaction[]
+}
+
+model Transaction {
+    id             Int      @id @default(autoincrement())
+    amount         String
+    mpesaID        String?
+    createdAt      DateTime @default(now()) @db.Timestamptz(2)
+    updatedAt      DateTime @updatedAt @db.Timestamptz(2)
+    sender         Payer    @relation(fields: [senderNumber], references: [phone])
+    senderNumber   String
+    recepient      Business @relation(fields: [recepientEmail], references: [email])
+    recepientEmail String
+    success        Boolean  @default(true)
+    Branch         Branch?  @relation(fields: [branchId], references: [id])
+    branchId       String?
+}
