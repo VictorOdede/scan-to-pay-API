@@ -1,5 +1,5 @@
 # Lipa API
-This is a REST API for the scan-to-pay App.
+This is a REST API for the scan-to-pay app.
 
 ## Why?
 The API processes requests from the client app to enable online payments after scanning a QR Code.
